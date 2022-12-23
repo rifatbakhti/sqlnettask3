@@ -33,10 +33,28 @@ where singer.name like '%ДДТ%'
 group by compilation.name;
 
 --6
-select album.name, count(singer.name) from album
+select album.name from album
 left join singeralbum on album.id=singeralbum.album_id
 left join singer on singeralbum.singer_id=singer.id
 left join genresinger on singer.id=genresinger.singer_id
 left join genre on genresinger.genre_id=genre.id
-group by album.name;
+group by album.name having count(genre.name) > 1;
 
+--7
+select track.name from compilation
+left join trackcompilation on compilation.id=trackcompilation.compilation_id
+left join track on trackcompilation.track_id=track.id
+group by track.name having count(compilation.name) = 0;
+
+--8
+select singer.name from track
+left join album on track.album_id=album.id
+left join singeralbum on album.id=singeralbum.album_id
+left join singer on singeralbum.singer_id=singer.id
+where track.duration = (select min(track.duration) from track)
+group by singer.name;
+
+--9
+select album.name from track
+left join album on track.album_id=album.id
+group by album.name having count(track.id) = 1;

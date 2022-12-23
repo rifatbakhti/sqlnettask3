@@ -322,3 +322,6 @@ values(15, 7)
 update compilation
 set year_of_issue = '01.01.2019'
 where id = 7;
+
+insert into genresinger
+values(3, 1)
