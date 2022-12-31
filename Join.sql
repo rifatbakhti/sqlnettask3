@@ -19,18 +19,16 @@ group by album.name;
 select singer.name from singer
 left join singeralbum on singer.id=singeralbum.singer_id
 left join album on singeralbum.album_id=album.id
-where album.year_of_issue not between '2020-01-01' and '2020-12-31'
-group by singer.name;
+where album.name <> all (select album.name from album where album.year_of_issue between '1991-01-01' and '1991-12-31');
 
 --5
-select compilation.name from compilation
+select DISTINCT compilation.name from compilation
 left join trackcompilation on compilation.id=trackcompilation.compilation_id
 left join track on trackcompilation.track_id=track.id
 left join album on track.album_id=album.id
 left join singeralbum on album.id=singeralbum.album_id
 left join singer on singeralbum.singer_id=singer.id
-where singer.name like '%ДДТ%'
-group by compilation.name;
+where singer.name like '%ДДТ%';
 
 --6
 select album.name from album
@@ -47,14 +45,13 @@ left join track on trackcompilation.track_id=track.id
 group by track.name having count(compilation.name) = 0;
 
 --8
-select singer.name from track
+select DISTINCT singer.name from track
 left join album on track.album_id=album.id
 left join singeralbum on album.id=singeralbum.album_id
 left join singer on singeralbum.singer_id=singer.id
-where track.duration = (select min(track.duration) from track)
-group by singer.name;
+where track.duration = (select min(track.duration) from track);
 
 --9
 select album.name from track
 left join album on track.album_id=album.id
-group by album.name having count(track.id) = 1;
+group by album.name having count(track.name) = (select count(track.id) from track left join album on track.album_id=album.id group by album.name order by count asc limit 1);
